@@ -8,88 +8,73 @@ import org.springframework.stereotype.Service;
 
 import com.duoc.RopaStore.exception.ProductoValidoException;
 import com.duoc.RopaStore.model.Producto;
+import com.duoc.RopaStore.model.Sucursal;
 import com.duoc.RopaStore.repository.ProductoRepository;
+import com.duoc.RopaStore.repository.SucursalRepository;
 
 import jakarta.annotation.PostConstruct;
 
 @Service
 public class ProductoService{
 
+    @Autowired 
     private final ProductoRepository productoRepo;
 
-    // inyección por constructor
-    @Autowired
-    public ProductoService(ProductoRepository productoRepo){
+    @Autowired 
+    private final SucursalRepository sucursalRepo;
+
+    // Constructor para inyectar las dependencias
+    public ProductoService(ProductoRepository productoRepo, SucursalRepository sucursalRepo) {
         this.productoRepo = productoRepo;
+        this.sucursalRepo = sucursalRepo;
     }
 
-    @PostConstruct
-    public void CargarCatalogo(){
-        System.out.println("Cargando productos...");
-        //cada vez que se inicie el proyecto va a cargar los productos a la BD
-        if (productoRepo.count() == 0){
-            productoRepo.save(new Producto("Polera negra", 14990, "Poleras"));
-            productoRepo.save(new Producto("Polera blanca", 14990, "Poleras"));
-            productoRepo.save(new Producto("Polera niño", 9990, "Poleras"));
-            productoRepo.save(new Producto("Buzo niño", 15990, "Pantalones"));
-            productoRepo.save(new Producto("Pantalon cafe", 32990, "Pantalones"));
-            productoRepo.save(new Producto("Pantalon negro", 32990, "Pantalones"));
-            productoRepo.save(new Producto("Chaqueta cuero cafe", 63900, "Chaquetas"));
-            productoRepo.save(new Producto("Chaqueta cuero negra", 63900, "Chaquetas"));
-            productoRepo.save(new Producto("Poleron niño", 22990, "Chaquetas"));
-        }
+    // obtener todos los productos en todas las sucursales
+    public List<Producto> obtenerProductos() {
+        return productoRepo.findAll();
     }
 
-    // catálogo de productos ordenados por precio
-    public List<Producto> ordenarCatalogoPrecio(){
-
-        //traemos los productos con find all
-        List<Producto> productosBD = productoRepo.findAll();
-
-        //los pasamos a la lista ordenada
-        ArrayList<Producto> productosOrdenadosPrecio = new ArrayList<>(productosBD);
-
-        //comparamos por precio y los ordenamos
-        productosOrdenadosPrecio.sort(Comparator.comparingDouble(Producto::getPrecio));
-
-        return productosOrdenadosPrecio;
+      // obtener producto por id
+    public Producto obtenerProductoPorId(Long id) {
+        return productoRepo.findById(id).orElse(null);
     }
 
-        // catálogo de productos ordenados por categoria
-    public List<Producto> ordenarCategoriaPrecio(String categoria){
+    // obtener productos por categoría
+    public List<Producto> obtenerProductosPorCategoria(String categoria) {
+        return productoRepo.findByCategoriaIgnoreCase(categoria);
+    }  
 
-        // manejo de excepciones
-        if (categoria == null || categoria.isEmpty()) {
-            throw new ProductoValidoException("Debe indicar una categoría válida (poleras, pantalones, chaquetas).");
-        }
-
-        //traemos los productos con find all
-        List<Producto> productosFiltrados = productoRepo.findByCategoriaIgnoreCase(categoria);
-
-        //los pasamos a la lista ordenada
-        ArrayList<Producto> productosCategoriaPrecio = new ArrayList<>(productosFiltrados);
-
-        //comparamos por precio y los ordenamos
-        productosCategoriaPrecio.sort(Comparator.comparingDouble(Producto::getPrecio));
-
-        return productosCategoriaPrecio;
+    // obtener productos por sucursal
+    public List<Producto> obtenerProductosPorSucursal(String sucursalId) {
+        return productoRepo.findBySucursalId(sucursalId);
     }
 
-    // método para agregar un producto a la base de datos
-    public Producto guardarProducto(Producto producto){
-
-        // manejo de excepciones
-        if (producto.getNombre() == null || producto.getNombre().isEmpty()) {
-            throw new ProductoValidoException("El nombre del producto es obligatorio.");
-        }
-        if (producto.getPrecio() <= 0) {
-            throw new ProductoValidoException("El precio del producto debe ser mayor a cero.");
-        }
-        if (producto.getCategoria() == null || producto.getCategoria().isEmpty()) {
-            throw new ProductoValidoException("La categoría del producto es obligatoria.");
-        }
-        return productoRepo.save(producto);
+    // crear un nuevo producto
+    public Producto crearProducto(Producto producto, Long sucursalId) {
+        Sucursal sucursal = sucursalRepo.findById(sucursalId).orElseThrow(() -> new RuntimeException("ERROR: La sucursal con ID " + sucursalId + " no existe."));
+        
+        producto.setSucursal(sucursal);
+        return productoRepo.save(producto); 
     }
 
+    // actualizar un producto existente
+    public Producto actualizarProducto(Long id, Producto productoActualizado) {
+        return productoRepo.findById(id).map(producto -> {
+            producto.setNombre(productoActualizado.getNombre());
+            producto.setPrecio(productoActualizado.getPrecio());
+            producto.setCategoria(productoActualizado.getCategoria());
+            producto.setStock(productoActualizado.getStock());
+            return productoRepo.save(producto);
+        }).orElseThrow(() -> new RuntimeException("ERROR: El producto con ID " + id + " no existe."));
 
+    }
+
+    // eliminar un producto
+    public boolean eliminarProducto(Long id) {
+        if (productoRepo.existsById(id)) {
+            productoRepo.deleteById(id);
+            return true;
+        }
+        return false;
+    }
 }

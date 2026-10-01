@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  
+  ropastore-mysql:
+    image: mysql:8.0
+    container_name: ropastore-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ropastore_db
+    ports:
+      - "3309:3306"
+    volumes:
+      - ropastore_mysql_data:/var/lib/mysql
+
+  ropastore-app:
+    build: .
+    container_name: ropastore-app
+    restart: always
+    ports:
+      - "8081:8081" 
+    environment:
+      DB_HOST: ropastore-mysql
+      DB_PORT: 3306
+      DB_NAME: ropastore_db
+      DB_USER: ropa_user
+      DB_PASSWORD: ropa_password
+    depends_on:
+      - ropastore-mysql
+
+volumes:
+  ropastore_mysql_data:
