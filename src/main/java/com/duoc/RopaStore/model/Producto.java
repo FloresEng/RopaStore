@@ -40,11 +40,12 @@ public class Producto{
     }
 
     // constructor sin id pq se genera solo y es autoincremental
-    public Producto(String nombre, double precio, String categoria, int stock){
+    public Producto(String nombre, double precio, String categoria, int stock, Sucursal sucursal){
         this.nombre = nombre;
         this.precio = precio;
         this.categoria = categoria;
         this.stock = stock;
+        this.sucursal = sucursal;
     }
 
     // getters

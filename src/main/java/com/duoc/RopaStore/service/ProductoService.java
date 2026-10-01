@@ -1,18 +1,16 @@
 package com.duoc.RopaStore.service;
-import java.util.ArrayList;
-import java.util.Comparator;
+
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.duoc.RopaStore.exception.ProductoValidoException;
 import com.duoc.RopaStore.model.Producto;
 import com.duoc.RopaStore.model.Sucursal;
 import com.duoc.RopaStore.repository.ProductoRepository;
 import com.duoc.RopaStore.repository.SucursalRepository;
 
-import jakarta.annotation.PostConstruct;
 
 @Service
 public class ProductoService{
@@ -35,8 +33,8 @@ public class ProductoService{
     }
 
       // obtener producto por id
-    public Producto obtenerProductoPorId(Long id) {
-        return productoRepo.findById(id).orElse(null);
+    public Optional<Producto> obtenerProductoPorId(Long id) {
+        return productoRepo.findById(id);
     }
 
     // obtener productos por categoría
@@ -45,7 +43,7 @@ public class ProductoService{
     }  
 
     // obtener productos por sucursal
-    public List<Producto> obtenerProductosPorSucursal(String sucursalId) {
+    public List<Producto> obtenerProductosPorSucursal(Long sucursalId) {
         return productoRepo.findBySucursalId(sucursalId);
     }
 
@@ -58,14 +56,14 @@ public class ProductoService{
     }
 
     // actualizar un producto existente
-    public Producto actualizarProducto(Long id, Producto productoActualizado) {
+    public Optional<Producto> actualizarProducto(Long id, Producto productoActualizado) {
         return productoRepo.findById(id).map(producto -> {
             producto.setNombre(productoActualizado.getNombre());
             producto.setPrecio(productoActualizado.getPrecio());
             producto.setCategoria(productoActualizado.getCategoria());
             producto.setStock(productoActualizado.getStock());
             return productoRepo.save(producto);
-        }).orElseThrow(() -> new RuntimeException("ERROR: El producto con ID " + id + " no existe."));
+        });
 
     }
 

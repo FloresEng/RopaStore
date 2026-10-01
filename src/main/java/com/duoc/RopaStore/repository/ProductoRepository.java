@@ -16,5 +16,5 @@ public interface ProductoRepository extends JpaRepository<Producto, Long>{
     Optional<Producto> findById(Long id);
 
     //lista para obtener productos por sucursal
-    List<Producto> findBySucursalId(String sucursalId);
+    List<Producto> findBySucursalId(Long sucursalId);
 }
