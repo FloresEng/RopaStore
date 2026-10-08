@@ -42,7 +42,7 @@ public class ProductoController{
     }
 
     @PostMapping
-    public ResponseEntity<Producto> crearProducto(@RequestBody Producto producto, Long sucursalId){
+    public ResponseEntity<Producto> crearProducto(@RequestBody Producto producto, @RequestParam Long sucursalId){
         Producto productoGuardado = productoService.crearProducto(producto, sucursalId);
         return ResponseEntity.status(HttpStatus.CREATED).body(productoGuardado);
     }

@@ -25,6 +25,11 @@ public class ClienteService {
         return clienteRepo.findAll();
     }
 
+    //obtener cliente por id
+    public Optional<Cliente> findClienteById(Long id) {
+        return clienteRepo.findById(id);
+    }
+
     // obtener cliente por rut
     public Optional<Cliente> obtenerClientePorRut(String rut) {
         return clienteRepo.findByRutIgnoreCase(rut);
@@ -56,5 +61,4 @@ public class ClienteService {
         }
         return false;
     }
-
 }

@@ -27,8 +27,8 @@ public class ClienteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Cliente> buscarClientePorRut(@PathVariable String rut){
-        return clienteService.obtenerClientePorRut(rut)
+    public ResponseEntity<Cliente> buscarClientePorId(@PathVariable Long id){
+        return clienteService.findClienteById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

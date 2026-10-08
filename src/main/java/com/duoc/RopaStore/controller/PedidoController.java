@@ -1,6 +1,5 @@
 package com.duoc.RopaStore.controller;
 
-import com.duoc.RopaStore.model.Cliente;
 import com.duoc.RopaStore.model.Pedido;
 import com.duoc.RopaStore.service.ClienteService;
 import com.duoc.RopaStore.service.PedidoService;
@@ -36,7 +35,7 @@ public class PedidoController {
 
     //CREAR UN PEDIDO NUEVO
     @PostMapping
-    public ResponseEntity<Pedido> crearPedido(@RequestBody Pedido pedido, Long idCliente){
+    public ResponseEntity<Pedido> crearPedido(@RequestBody Pedido pedido, @RequestParam Long idCliente){
         Pedido pedidoGuardado = pedidoService.crearPedido(pedido, idCliente);
         return ResponseEntity.status(HttpStatus.CREATED).body(pedidoGuardado);
     }
@@ -60,50 +59,5 @@ public class PedidoController {
 
         return ResponseEntity.noContent().build();
     }
-
-
-    /*
-
-    //LISTAR TODOS LOS CLIENTES
-    public ResponseEntity<List<Pedido>> buscarPedidosPorCliente(@PathVariable("id") Long clienteId){
-        List<Pedido> pedidos = pedidoService.obtenerPedidosPorCliente(clienteId);
-        return ResponseEntity.ok(pedidos);
-
-    //BUSCARCLIENTE POR EL ID
-    @GetMapping("/cliente/{id}")
-    public ResponseEntity<Cliente> buscarClienteRut(@PathVariable String rut){
-        return clienteService.obtenerClientePorRut(rut)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    //CREAR UN CLIENTE NUEVO
-    @PostMapping("/cliente")
-    public ResponseEntity<Cliente> crearCliente(@RequestBody Cliente cliente){
-        Cliente clienteGuardado = clienteService.crearCliente(cliente);
-        return ResponseEntity.status(HttpStatus.CREATED).body(clienteGuardado);
-    }
-
-    //ACTUALIZAR UN CLIENTE DE ACUERDO A SU ID
-    @PutMapping("/cliente/{id}")
-    public ResponseEntity<Cliente> actualizarCliente(@PathVariable Long id, @RequestBody Cliente cliente){
-        return clienteService.actualizarCliente(id, cliente)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    //ELIMINAR CLIENTE DE ACUERDO A SU ID
-    @DeleteMapping("/cliente/{id}")
-    public ResponseEntity<Void> eliminarCliente(@PathVariable Long id){
-        boolean eliminado = clienteService.eliminarCliente(id);
-
-        if(!eliminado){
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.noContent().build();
-    }
-
-    */
 
 }
