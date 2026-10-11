@@ -26,12 +26,20 @@ public class ClienteController {
         return ResponseEntity.ok(clienteService.obtenerClientes());
     }
 
+    @GetMapping("/rut/{rut}")
+    public ResponseEntity<Cliente> buscarClientePorRut(@PathVariable String rut){
+        return clienteService.obtenerClientePorRut(rut)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<Cliente> buscarClientePorId(@PathVariable Long id){
+    public ResponseEntity<Cliente> buscarClientePorid(@PathVariable Long id){
         return clienteService.findClienteById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
 
     @PostMapping
     public ResponseEntity<Cliente> crearCliente(@RequestBody Cliente cliente){

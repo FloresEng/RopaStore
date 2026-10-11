@@ -11,7 +11,7 @@ services:
       - APP_USER=ropa_user
       - APP_USER_PASSWORD=ropa_password  
     ports:
-      - "1521:1521"
+      - "1522:1521"
     volumes:
       - oracle_data:/opt/oracle/oradata
 
