@@ -2,19 +2,18 @@ version: '3.8'
 
 services:
   
-  ropastore-mysql:
-    image: mysql:8.0
-    container_name: ropastore-mysql
+  ropastore-oracle:
+    image: gvenzl/oracle-free:latest
+    container_name: ropastore-oracle
     restart: always
     environment:
-      MYSQL_USER: ropa_user
-      MYSQL_PASSWORD: ropa_password
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: ropastore_db
+      - ORACLE_PASSWORD=ropa_password
+      - APP_USER=ropa_user
+      - APP_USER_PASSWORD=ropa_password  
     ports:
-      - "3309:3306"
+      - "1521:1521"
     volumes:
-      - ropastore_mysql_data:/var/lib/mysql
+      - oracle_data:/opt/oracle/oradata
 
   ropastore-app:
     build: .
@@ -23,13 +22,13 @@ services:
     ports:
       - "8081:8081" 
     environment:
-      DB_HOST: ropastore-mysql
-      DB_PORT: 3306
-      DB_NAME: ropastore_db
+      DB_HOST: ropastore-oracle
+      DB_PORT: 1521
+      DB_NAME: FREEPDB1
       DB_USER: ropa_user
       DB_PASSWORD: ropa_password
     depends_on:
-      - ropastore-mysql
+      - ropastore-oracle
 
 volumes:
-  ropastore_mysql_data:
+  oracle_data:
